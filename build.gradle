@@ -1,0 +1,25 @@
+apply plugin: 'java'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.10'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    def camelVersion = '2.16.1'
+    def slfVersion = '1.6.6'
+    def log4jVersion = '1.2.17'
+    compile(
+            "org.apache.camel:camel-core:$camelVersion"
+    )
+
+    testCompile(
+            "org.apache.camel:camel-test:$camelVersion",
+            "org.slf4j:slf4j-log4j12:${slfVersion}",
+            "log4j:log4j:${log4jVersion}"
+    )
+}
