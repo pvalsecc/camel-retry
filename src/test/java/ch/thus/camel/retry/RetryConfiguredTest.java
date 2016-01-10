@@ -87,7 +87,7 @@ public class RetryConfiguredTest extends BaseRetryTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start").
-                        to(String.format("retry:direct:sub?maxRetries=%d&onSuccess=mock:onSuccess&onExhausted=mock:onExhausted", MAX_RETRIES)).
+                        to(String.format("retry:direct:sub?maxTries=%d&onSuccess=mock:onSuccess&onExhausted=mock:onExhausted", MAX_RETRIES)).
                         to("mock:result");
                 from("direct:sub").to("mock:sub").process(processor);
             }

@@ -11,10 +11,10 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(scheme = "retry", syntax = "retry:targetComponent",
         title = "Retry delivery", producerOnly = true)
 public class RetryEndpoint extends DefaultEndpoint {
-    public static final int DEFAULT_MAX_RETRIES = 5;
+    public static final int DEFAULT_MAX_TRIES = 5;
 
     @UriParam
-    private int maxRetries = DEFAULT_MAX_RETRIES;
+    private int maxTries = DEFAULT_MAX_TRIES;
 
     @UriParam
     private Class<? extends Throwable> exception = Exception.class;
@@ -49,12 +49,12 @@ public class RetryEndpoint extends DefaultEndpoint {
         return false;
     }
 
-    public int getMaxRetries() {
-        return maxRetries;
+    public int getMaxTries() {
+        return maxTries;
     }
 
-    public void setMaxRetries(int maxRetries) {
-        this.maxRetries = maxRetries;
+    public void setMaxTries(int maxTries) {
+        this.maxTries = maxTries;
     }
 
     public Class getException() {

@@ -32,11 +32,8 @@ public class RetryProducer extends DefaultProducer {
                     exchange.getContext().getStreamCachingStrategy().cache(exchange));
         }
         Exchange tempExchange = exchange.copy(true);
-        @SuppressWarnings("deprecation")
-        ErrorHandlerFactory origErrorHandler = exchange.getContext().getErrorHandlerBuilder();
         try {
-            exchange.getContext().setErrorHandlerBuilder(null);
-            for (int retry = 0; retry < endpoint.getMaxRetries(); ++retry) {
+            for (int retry = 0; retry < endpoint.getMaxTries(); ++retry) {
                 endpoint.getTargetProducer().process(tempExchange);
                 if (tempExchange.getException() == null) {
                     onSuccess(tempExchange);
@@ -59,13 +56,12 @@ public class RetryProducer extends DefaultProducer {
             tempExchange.setException(new RetryExhaustedException("Retry exhausted", tempExchange.getException()));
         } finally {
             ExchangeHelper.copyResults(exchange, tempExchange);
-            exchange.getContext().setErrorHandlerBuilder(origErrorHandler);
         }
     }
 
     private void onExhausted(Exchange exchange) throws Exception {
         LOGGER.info("{} exhausted maxRetries={}", endpoint.getEndpointUri(),
-                endpoint.getMaxRetries());
+                endpoint.getMaxTries());
         if (endpoint.getOnExhausted() != null) {
             endpoint.getOnExhausted().process(exchange);
         }

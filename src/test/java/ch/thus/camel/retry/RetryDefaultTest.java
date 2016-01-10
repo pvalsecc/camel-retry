@@ -21,9 +21,9 @@ public class RetryDefaultTest extends BaseRetryTest {
 
     @Test
     public void testSuccessLastMoment() throws InterruptedException {
-        processor.nbFails = RetryEndpoint.DEFAULT_MAX_RETRIES - 1;
+        processor.nbFails = RetryEndpoint.DEFAULT_MAX_TRIES - 1;
         List<String> bodies =
-                Collections.nCopies(RetryEndpoint.DEFAULT_MAX_RETRIES, BODY);
+                Collections.nCopies(RetryEndpoint.DEFAULT_MAX_TRIES, BODY);
         subEndpoint.expectedBodiesReceived(bodies);
         result.expectedBodiesReceived(RESPONSE);
         result.expectedPropertyReceived(TEST_PROP_NAME, TEST_PROP_VALUE);
@@ -34,9 +34,9 @@ public class RetryDefaultTest extends BaseRetryTest {
     @Test
     public void testFail() throws InterruptedException {
         try {
-            processor.nbFails = RetryEndpoint.DEFAULT_MAX_RETRIES;
+            processor.nbFails = RetryEndpoint.DEFAULT_MAX_TRIES;
             List<String> bodies =
-                    Collections.nCopies(RetryEndpoint.DEFAULT_MAX_RETRIES, BODY);
+                    Collections.nCopies(RetryEndpoint.DEFAULT_MAX_TRIES, BODY);
             subEndpoint.expectedBodiesReceived(bodies);
             result.expectedMessageCount(0);
 
@@ -52,7 +52,7 @@ public class RetryDefaultTest extends BaseRetryTest {
     public void testFatal() throws InterruptedException {
         try {
             processor.fatal = true;
-            processor.nbFails = RetryEndpoint.DEFAULT_MAX_RETRIES;
+            processor.nbFails = RetryEndpoint.DEFAULT_MAX_TRIES;
             subEndpoint.expectedBodiesReceived(BODY);
             result.expectedMessageCount(0);
 
