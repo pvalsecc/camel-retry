@@ -27,11 +27,6 @@ public class RetryConfiguredTest extends BaseRetryTest {
         onExhausted.expectedMessageCount(0);
 
         template.sendBody(BODY);
-
-        subEndpoint.assertIsSatisfied();
-        result.assertIsSatisfied();
-        onSuccess.assertIsSatisfied();
-        onExhausted.assertIsSatisfied();
     }
 
     @Test
@@ -47,11 +42,6 @@ public class RetryConfiguredTest extends BaseRetryTest {
         onExhausted.expectedMessageCount(0);
 
         template.sendBody(BODY);
-
-        subEndpoint.assertIsSatisfied();
-        result.assertIsSatisfied();
-        onSuccess.assertIsSatisfied();
-        onExhausted.assertIsSatisfied();
     }
 
     @Test
@@ -66,11 +56,6 @@ public class RetryConfiguredTest extends BaseRetryTest {
             onExhausted.expectedBodiesReceived(BODY);
 
             template.sendBody(BODY);
-
-            subEndpoint.assertIsSatisfied();
-            result.assertIsSatisfied();
-            onSuccess.assertIsSatisfied();
-            onExhausted.assertIsSatisfied();
             fail("Expected a failure");
         } catch (CamelExecutionException camelException) {
             assertEquals(RetryExhaustedException.class, camelException.getCause().getClass());
@@ -89,10 +74,6 @@ public class RetryConfiguredTest extends BaseRetryTest {
 
             template.sendBody(BODY);
 
-            subEndpoint.assertIsSatisfied();
-            result.assertIsSatisfied();
-            onSuccess.assertIsSatisfied();
-            onExhausted.assertIsSatisfied();
             fail("Expected a failure");
         } catch (CamelExecutionException camelException) {
             assertEquals(FailRetryException.class, camelException.getCause().getClass());
@@ -111,5 +92,11 @@ public class RetryConfiguredTest extends BaseRetryTest {
                 from("direct:sub").to("mock:sub").process(processor);
             }
         };
+    }
+
+    public void checkMocksAreHappy() throws InterruptedException {
+        super.checkMocksAreHappy();
+        onSuccess.assertIsSatisfied();
+        onExhausted.assertIsSatisfied();
     }
 }

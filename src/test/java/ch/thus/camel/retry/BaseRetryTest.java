@@ -1,8 +1,10 @@
 package ch.thus.camel.retry;
 
 import org.apache.camel.*;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,5 +49,11 @@ public abstract class BaseRetryTest extends CamelTestSupport {
             exchange.getOut().setBody(RESPONSE);
             exchange.setProperty(TEST_PROP_NAME, TEST_PROP_VALUE);
         }
+    }
+
+    @After
+    public void checkMocksAreHappy() throws InterruptedException {
+        subEndpoint.assertIsSatisfied();
+        result.assertIsSatisfied();
     }
 }

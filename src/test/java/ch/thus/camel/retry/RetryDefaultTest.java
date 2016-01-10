@@ -1,9 +1,11 @@
 package ch.thus.camel.retry;
 
-import org.apache.camel.*;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,9 +17,6 @@ public class RetryDefaultTest extends BaseRetryTest {
         result.expectedPropertyReceived(TEST_PROP_NAME, TEST_PROP_VALUE);
 
         template.sendBody(BODY);
-
-        subEndpoint.assertIsSatisfied();
-        result.assertIsSatisfied();
     }
 
     @Test
@@ -30,9 +29,6 @@ public class RetryDefaultTest extends BaseRetryTest {
         result.expectedPropertyReceived(TEST_PROP_NAME, TEST_PROP_VALUE);
 
         template.sendBody(BODY);
-
-        subEndpoint.assertIsSatisfied();
-        result.assertIsSatisfied();
     }
 
     @Test
@@ -46,8 +42,6 @@ public class RetryDefaultTest extends BaseRetryTest {
 
             template.sendBody(BODY);
 
-            subEndpoint.assertIsSatisfied();
-            result.assertIsSatisfied();
             fail("Expected a failure");
         } catch (CamelExecutionException camelException) {
             assertEquals(RetryExhaustedException.class, camelException.getCause().getClass());
@@ -64,12 +58,22 @@ public class RetryDefaultTest extends BaseRetryTest {
 
             template.sendBody(BODY);
 
-            subEndpoint.assertIsSatisfied();
-            result.assertIsSatisfied();
             fail("Expected a failure");
         } catch (CamelExecutionException camelException) {
             assertEquals(FailRetryException.class, camelException.getCause().getClass());
         }
+    }
+
+    @Test
+    public void testStreamBodiesAreSupported() throws Exception {
+        processor.nbFails = 1;
+        List<String> bodies =
+                Collections.nCopies(2, BODY);
+        subEndpoint.expectedBodiesReceived(bodies);
+        result.expectedBodiesReceived(RESPONSE);
+
+        InputStream body = new ByteArrayInputStream(BODY.getBytes("utf-8"));
+        template.sendBody(body);
     }
 
     @Override

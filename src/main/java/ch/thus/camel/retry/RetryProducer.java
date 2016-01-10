@@ -2,11 +2,14 @@ package ch.thus.camel.retry;
 
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.PipelineHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
 
 /**
  * Created by patrick on 09.01.16.
@@ -24,6 +27,10 @@ public class RetryProducer extends DefaultProducer {
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
     public void process(Exchange exchange) throws Exception {
+        if (exchange.getIn().getBody() instanceof InputStream) {
+            exchange.getIn().setBody(
+                    exchange.getContext().getStreamCachingStrategy().cache(exchange));
+        }
         Exchange tempExchange = exchange.copy(true);
         @SuppressWarnings("deprecation")
         ErrorHandlerFactory origErrorHandler = exchange.getContext().getErrorHandlerBuilder();
@@ -40,6 +47,10 @@ public class RetryProducer extends DefaultProducer {
                     //retry
                     LOGGER.debug("{} try {} failed", endpoint.getEndpointUri(), retry + 1);
                     tempExchange = exchange.copy(true);
+                    if (exchange.getIn().getBody() instanceof StreamCache) {
+                        StreamCache is = (StreamCache) exchange.getIn().getBody();
+                        is.reset();
+                    }
                 } else {
                     return;  //forward exception
                 }
