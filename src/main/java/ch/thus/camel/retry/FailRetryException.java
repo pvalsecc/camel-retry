@@ -20,7 +20,17 @@ package ch.thus.camel.retry;
  * failure event is all the retries are not exhausted.
  */
 public class FailRetryException extends Exception {
+    private boolean consumed = false;
+
     public FailRetryException(String message) {
         super(message);
+    }
+
+    public boolean isConsumed() {
+        return consumed;
+    }
+
+    public void setConsumed() {
+        this.consumed = true;
     }
 }

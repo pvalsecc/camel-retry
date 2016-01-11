@@ -55,9 +55,15 @@ public class RetryProducer extends DefaultProducer {
                 if (tempExchange.getException() == null) {
                     onSuccess(tempExchange);
                     return;  //success
-                } else if (isExceptionMatching(tempExchange.getException(), FailRetryException.class)) {
-                    return;  //forward exception
-                } else if (isExceptionMatching(tempExchange.getException(), endpoint.getException())) {
+                }
+                FailRetryException failure = getExceptionMatching(tempExchange.getException(), FailRetryException.class);
+                if (failure != null) {
+                    if (!failure.isConsumed()) {
+                        failure.setConsumed(); //make it non-failure for surrounding retries
+                        return;  //forward exception
+                    }
+                }
+                if (getExceptionMatching(tempExchange.getException(), endpoint.getException()) != null) {
                     //retry
                     LOGGER.debug("{} try {} failed", endpoint.getEndpointUri(), retry + 1);
                     tempExchange = exchange.copy(true);
@@ -91,11 +97,15 @@ public class RetryProducer extends DefaultProducer {
         }
     }
 
-    protected static boolean isExceptionMatching(Throwable ex, Class clazz) {
-        if (ex.getCause() != null && isExceptionMatching(ex.getCause(), clazz)) { //deep first
-            return true;
-        } else {
-            return clazz.isInstance(ex);
+    protected static <T extends Throwable> T getExceptionMatching(Throwable ex, Class<T> clazz) {
+        if (ex.getCause() != null) {
+            //deep first
+            T ret = getExceptionMatching(ex.getCause(), clazz);
+            if (ret != null) {
+                return ret;
+            }
         }
+        //noinspection unchecked
+        return clazz.isInstance(ex) ? (T) ex : null;
     }
 }

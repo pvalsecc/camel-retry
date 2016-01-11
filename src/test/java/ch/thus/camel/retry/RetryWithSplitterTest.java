@@ -52,7 +52,7 @@ public class RetryWithSplitterTest extends BaseRetryTest {
             template.sendBody("1;2;3;4");
             fail("Should throw an exception");
         } catch (CamelExecutionException ex) {
-            assertTrue(RetryProducer.isExceptionMatching(ex, RetryExhaustedException.class));
+            assertNotNull(RetryProducer.getExceptionMatching(ex, RetryExhaustedException.class));
         }
     }
 

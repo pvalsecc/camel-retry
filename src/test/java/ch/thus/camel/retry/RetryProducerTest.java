@@ -22,22 +22,22 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class RetryProducerTest {
 
     @Test
     public void testIsExceptionMatching() throws Exception {
         IllegalAccessException illegalAccess = new IllegalAccessException();
-        assertTrue(RetryProducer.isExceptionMatching(illegalAccess, IllegalAccessException.class));
-        assertFalse(RetryProducer.isExceptionMatching(illegalAccess, IOException.class));
-        assertTrue(RetryProducer.isExceptionMatching(illegalAccess, ReflectiveOperationException.class));
+        assertEquals(illegalAccess, RetryProducer.getExceptionMatching(illegalAccess, IllegalAccessException.class));
+        assertNull(RetryProducer.getExceptionMatching(illegalAccess, IOException.class));
+        assertEquals(illegalAccess, RetryProducer.getExceptionMatching(illegalAccess, ReflectiveOperationException.class));
 
 
         CamelExecutionException camel = new CamelExecutionException("boom", new DefaultExchange((CamelContext) null), illegalAccess);
-        assertTrue(RetryProducer.isExceptionMatching(camel, IllegalAccessException.class));
-        assertFalse(RetryProducer.isExceptionMatching(camel, IOException.class));
-        assertTrue(RetryProducer.isExceptionMatching(camel, ReflectiveOperationException.class));
+        assertEquals(illegalAccess, RetryProducer.getExceptionMatching(camel, IllegalAccessException.class));
+        assertNull(RetryProducer.getExceptionMatching(camel, IOException.class));
+        assertEquals(illegalAccess, RetryProducer.getExceptionMatching(camel, ReflectiveOperationException.class));
     }
 }
