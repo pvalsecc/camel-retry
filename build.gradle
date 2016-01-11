@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
@@ -8,6 +9,21 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
+
+def getVersionName = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'sh', '-c', 'git describe --tags --first-parent || echo "0"'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim().replace("release/", "").replaceAll("/", "_")
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+group = 'ch.thus.camel.retry'
+archivesBaseName = 'camel-retry'
+version = getVersionName()
 
 dependencies {
     def camelVersion = '2.16.1'
