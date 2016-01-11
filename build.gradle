@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
@@ -38,4 +38,26 @@ dependencies {
             "org.slf4j:slf4j-log4j12:${slfVersion}",
             "log4j:log4j:${log4jVersion}"
     )
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url "$buildDir/repo"
+        }
+    }
 }
