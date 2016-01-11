@@ -61,7 +61,12 @@ public abstract class BaseRetryTest extends CamelTestSupport {
                     throw new Exception("test");
                 }
             }
-            exchange.getOut().setBody(RESPONSE);
+            String body = exchange.getIn().getBody(String.class);
+            if (body.matches("\\d+")) {
+                exchange.getOut().setBody("#" + body);
+            } else {
+                exchange.getOut().setBody(RESPONSE);
+            }
             exchange.setProperty(TEST_PROP_NAME, TEST_PROP_VALUE);
         }
     }
