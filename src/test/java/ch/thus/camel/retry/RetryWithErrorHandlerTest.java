@@ -93,6 +93,7 @@ public class RetryWithErrorHandlerTest extends BaseRetryTest {
                 DeadLetterChannelBuilder errorHandlerBuilder = new DeadLetterChannelBuilder("mock:deadLetter");
                 RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
                 redeliveryPolicy.setMaximumRedeliveries(NB_REDELIVERIES);
+                redeliveryPolicy.setRedeliveryDelay(0);
                 errorHandlerBuilder.setRedeliveryPolicy(redeliveryPolicy);
                 from("direct:start")
                         .errorHandler(errorHandlerBuilder)
