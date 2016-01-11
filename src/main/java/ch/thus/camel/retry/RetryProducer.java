@@ -48,6 +48,9 @@ public class RetryProducer extends DefaultProducer {
         Exchange tempExchange = exchange.copy(true);
         try {
             for (int retry = 0; retry < endpoint.getMaxTries(); ++retry) {
+                if (endpoint.getRetryDelay() > 0 && retry > 0) {
+                    Thread.sleep(endpoint.getRetryDelay());
+                }
                 endpoint.getTargetProducer().process(tempExchange);
                 if (tempExchange.getException() == null) {
                     onSuccess(tempExchange);

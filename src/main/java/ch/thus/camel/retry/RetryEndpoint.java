@@ -44,6 +44,9 @@ public class RetryEndpoint extends DefaultEndpoint {
     @UriParam
     private Producer onExhausted;
 
+    @UriParam
+    private int retryDelay = 0;
+
     private final Producer targetProducer;
 
     public RetryEndpoint(String uri, RetryComponent retryComponent) throws Exception {
@@ -106,5 +109,13 @@ public class RetryEndpoint extends DefaultEndpoint {
     public void setOnExhausted(String onExhausted) throws Exception {
         final Endpoint endpoint = getCamelContext().getEndpoint(onExhausted);
         this.onExhausted = endpoint.createProducer();
+    }
+
+    public int getRetryDelay() {
+        return retryDelay;
+    }
+
+    public void setRetryDelay(int retryDelay) {
+        this.retryDelay = retryDelay;
     }
 }
