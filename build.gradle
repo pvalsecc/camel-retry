@@ -19,14 +19,14 @@ def getVersionName = { ->
     return stdout.toString().trim().replace("release/", "").replaceAll("/", "_")
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 group = 'ch.thus.camel.retry'
 archivesBaseName = 'camel-retry'
 version = getVersionName()
 
 dependencies {
-    def camelVersion = '2.16.1'
+    def camelVersion = '2.17.1'
     def slfVersion = '1.6.6'
     def log4jVersion = '1.2.17'
     compile(
